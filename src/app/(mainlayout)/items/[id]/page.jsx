@@ -13,6 +13,17 @@ import {
   FiMail,
   FiShield,
 } from "react-icons/fi";
+import Image from "next/image";
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const tool = await singleItem(id);
+
+  return {
+    title: tool ? `${tool.name} - ToolStack` : "Tool Not Found",
+    description: tool ? tool.description : "Find the best software tools here.",
+  };
+}
 
 const SingleItems = async ({ params }) => {
   const { id } = await params;
@@ -60,7 +71,9 @@ const SingleItems = async ({ params }) => {
           {/* Left Side: Visuals & Description */}
           <div className="lg:col-span-7">
             <div className="relative group overflow-hidden rounded-[3rem] bg-slate-200">
-              <img
+              <Image
+                width={500}
+                height={500}
                 src={tool.image}
                 alt={tool.name}
                 className="w-full aspect-[16/10] object-cover shadow-2xl transition-transform duration-700 group-hover:scale-105"
