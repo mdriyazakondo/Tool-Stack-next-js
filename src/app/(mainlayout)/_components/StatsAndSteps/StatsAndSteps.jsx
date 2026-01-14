@@ -93,7 +93,7 @@ const StatsAndSteps = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-          <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 z-0"></div>
+          <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 z-100"></div>
 
           {steps.map((step, index) => (
             <div

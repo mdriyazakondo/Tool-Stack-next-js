@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,13 +17,16 @@ import { RiLayoutGridFill } from "react-icons/ri";
 import useUser from "@/hook/useUser";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
+import { FaUser } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
+
   const { users: userData, status } = useUser();
   const logInData = userData?.user;
 
+  // Menu items depend on logged-in user role
   const menuItems = [
     { name: "Overview", icon: <FiPieChart />, path: "/dashboard" },
     { name: "My Tools", icon: <FiGrid />, path: "/dashboard/my-items" },
@@ -31,7 +35,15 @@ const DashboardLayout = ({ children }) => {
       icon: <FiPlusSquare />,
       path: "/dashboard/add-item",
     },
-    { name: "Settings", icon: <FiSettings />, path: "/dashboard/settings" },
+    ...(logInData?.role === "admin"
+      ? [
+          {
+            name: "Manage User",
+            path: "/dashboard/all-users",
+            icon: <FaUser />,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -56,29 +68,39 @@ const DashboardLayout = ({ children }) => {
           </Link>
 
           <nav className="flex-1 space-y-2 overflow-y-auto no-scrollbar">
-            {menuItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.path}
-                onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-semibold transition-all duration-200 group ${
-                  pathname === item.path
-                    ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40"
-                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                }`}
-              >
-                <span
-                  className={`text-xl ${
-                    pathname === item.path
-                      ? "text-white"
-                      : "group-hover:text-indigo-400"
-                  }`}
-                >
-                  {item.icon}
-                </span>
-                {item.name}
-              </Link>
-            ))}
+            {status === "loading"
+              ? // loading skeleton for menu items
+                Array(4)
+                  .fill(0)
+                  .map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="h-10 bg-slate-700/50 rounded-lg animate-pulse"
+                    ></div>
+                  ))
+              : menuItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.path}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-semibold transition-all duration-200 group ${
+                      pathname === item.path
+                        ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                    }`}
+                  >
+                    <span
+                      className={`text-xl ${
+                        pathname === item.path
+                          ? "text-white"
+                          : "group-hover:text-indigo-400"
+                      }`}
+                    >
+                      {item.icon}
+                    </span>
+                    {item.name}
+                  </Link>
+                ))}
           </nav>
 
           <div className="pt-6 border-t border-slate-800 shrink-0">
@@ -93,7 +115,9 @@ const DashboardLayout = ({ children }) => {
         </div>
       </aside>
 
+      {/* Main content */}
       <div className="flex flex-col flex-1 min-w-0">
+        {/* Header */}
         <header className="sticky top-0 z-40 h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-10 shrink-0">
           <div className="flex items-center gap-4">
             <button
@@ -148,6 +172,7 @@ const DashboardLayout = ({ children }) => {
           </div>
         </header>
 
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-slate-50/50 p-4 lg:p-10 custom-scrollbar">
           <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}

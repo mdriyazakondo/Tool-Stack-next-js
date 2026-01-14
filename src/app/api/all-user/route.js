@@ -17,6 +17,8 @@ export async function GET(request) {
     return new Response(JSON.stringify({ users: allUsers }));
   }
 
-  // Otherwise return only the logged-in user
-  return new Response(JSON.stringify({ user }));
+  return Response.json(
+    { user, message: "all user successfully get" },
+    { status: 200 }
+  );
 }

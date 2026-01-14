@@ -29,7 +29,9 @@ export const getUser = async (email) => {
 
 export const getUserAll = async (email) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/users?email=${email}`);
+    const res = await fetch(
+      `http://localhost:3000/api/all-user?email=${email}`
+    );
     const data = await res.json();
     return data;
   } catch (error) {
