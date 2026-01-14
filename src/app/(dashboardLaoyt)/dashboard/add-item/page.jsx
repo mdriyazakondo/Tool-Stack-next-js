@@ -1,10 +1,10 @@
 "use client";
-import { createItem } from "@/services/item.server";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 import {
   FiCheckCircle,
-  FiCornerDownLeft,
   FiDollarSign,
   FiImage,
   FiLoader,
@@ -12,12 +12,16 @@ import {
   FiTag,
   FiType,
 } from "react-icons/fi";
-import Swal from "sweetalert2";
 import { TbPremiumRights } from "react-icons/tb";
+import { createItem } from "@/services/item.server";
+import useUser from "@/hook/useUser";
 
 const AddItemPage = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const { users: userData, loading: userLoading } = useUser();
+  const logInData = userData?.user;
 
   const {
     register,
@@ -34,12 +38,19 @@ const AddItemPage = () => {
       image: "",
       description: "",
       isPremium: false,
-      ownerName: "", // নতুন
-      ownerEmail: "", // নতুন
+      ownerName: "",
+      ownerEmail: "",
     },
   });
 
   const isPremiumValue = watch("isPremium");
+
+  useEffect(() => {
+    if (logInData) {
+      setValue("ownerName", logInData?.fullName || "");
+      setValue("ownerEmail", logInData?.email || "");
+    }
+  }, [logInData, setValue]);
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -73,6 +84,9 @@ const AddItemPage = () => {
     }
   };
 
+  // Show loading if user data is not ready yet
+  if (userLoading) return <p>Loading user data...</p>;
+
   return (
     <div className="max-w-3xl mx-auto animate-in fade-in duration-500 pb-10">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -103,7 +117,7 @@ const AddItemPage = () => {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* --- Premium Selection Section --- */}
+          {/* Premium Toggle */}
           <div className="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100 mb-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div
@@ -122,8 +136,6 @@ const AddItemPage = () => {
                 </p>
               </div>
             </div>
-
-            {/* Custom Toggle Switch */}
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -134,8 +146,8 @@ const AddItemPage = () => {
             </label>
           </div>
 
+          {/* Name & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Tool Name */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
                 <FiType className="text-indigo-600" /> Tool Name
@@ -150,7 +162,6 @@ const AddItemPage = () => {
               />
             </div>
 
-            {/* Category */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
                 <FiTag className="text-emerald-600" /> Category
@@ -167,8 +178,8 @@ const AddItemPage = () => {
             </div>
           </div>
 
+          {/* Price & Image */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Price */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
                 <FiDollarSign className="text-amber-600" />{" "}
@@ -184,7 +195,6 @@ const AddItemPage = () => {
               />
             </div>
 
-            {/* Image URL */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
                 <FiImage className="text-blue-600" /> Image URL
@@ -202,43 +212,37 @@ const AddItemPage = () => {
             </div>
           </div>
 
-          {/* --- Owner Name & Email --- */}
+          {/* Owner Name & Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Owner Name */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1">
                 Owner Name
               </label>
               <input
                 type="text"
-                placeholder="e.g. John Doe"
                 className={`w-full px-5 py-4 bg-slate-50 border ${
                   errors.ownerName ? "border-red-400" : "border-slate-200"
                 } rounded-2xl focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 outline-none transition-all`}
                 {...register("ownerName", {
                   required: "Owner Name is required",
                 })}
+                readOnly
               />
             </div>
 
-            {/* Owner Email */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1">
                 Owner Email
               </label>
               <input
                 type="email"
-                placeholder="e.g. john@example.com"
                 className={`w-full px-5 py-4 bg-slate-50 border ${
                   errors.ownerEmail ? "border-red-400" : "border-slate-200"
                 } rounded-2xl focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 outline-none transition-all`}
                 {...register("ownerEmail", {
                   required: "Owner Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email",
-                  },
                 })}
+                readOnly
               />
             </div>
           </div>
@@ -260,6 +264,7 @@ const AddItemPage = () => {
             ></textarea>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}

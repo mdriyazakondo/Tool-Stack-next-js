@@ -11,13 +11,17 @@ import {
   FiMenu,
   FiX,
   FiBell,
-  FiUser,
 } from "react-icons/fi";
 import { RiLayoutGridFill } from "react-icons/ri";
+import useUser from "@/hook/useUser";
+import Image from "next/image";
+import { signOut } from "next-auth/react";
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { users: userData, status } = useUser();
+  const logInData = userData?.user;
 
   const menuItems = [
     { name: "Overview", icon: <FiPieChart />, path: "/dashboard" },
@@ -32,14 +36,13 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
-      {/* Sidebar for Desktop & Mobile */}
+      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex-shrink-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full p-6">
-          {/* Logo - Sticky inside sidebar */}
           <Link
             href="/"
             className="flex items-center gap-3 mb-10 px-2 shrink-0"
@@ -52,7 +55,6 @@ const DashboardLayout = ({ children }) => {
             </span>
           </Link>
 
-          {/* Navigation - Scrollable if items are many */}
           <nav className="flex-1 space-y-2 overflow-y-auto no-scrollbar">
             {menuItems.map((item) => (
               <Link
@@ -79,9 +81,11 @@ const DashboardLayout = ({ children }) => {
             ))}
           </nav>
 
-          {/* Logout - Fixed at bottom */}
           <div className="pt-6 border-t border-slate-800 shrink-0">
-            <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-rose-400 hover:bg-rose-500/10 transition-all">
+            <button
+              onClick={() => signOut()}
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-rose-400 hover:bg-rose-500/10 transition-all"
+            >
               <FiLogOut className="text-xl" />
               Logout
             </button>
@@ -89,9 +93,7 @@ const DashboardLayout = ({ children }) => {
         </div>
       </aside>
 
-      {/* Main Wrapper */}
       <div className="flex flex-col flex-1 min-w-0">
-        {/* Topbar - Always Sticky */}
         <header className="sticky top-0 z-40 h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-10 shrink-0">
           <div className="flex items-center gap-4">
             <button
@@ -100,41 +102,52 @@ const DashboardLayout = ({ children }) => {
             >
               {isSidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
             </button>
-            <div className="hidden lg:block">
-              <h2 className="text-slate-800 font-black text-xl tracking-tight">
-                {menuItems.find((item) => item.path === pathname)?.name ||
-                  "Dashboard"}
-              </h2>
-            </div>
+            <h2 className="hidden lg:block text-slate-800 font-black text-xl tracking-tight">
+              {menuItems.find((item) => item.path === pathname)?.name ||
+                "Dashboard"}
+            </h2>
           </div>
 
           <div className="flex items-center gap-3 md:gap-5">
-            {/* Search Placeholder / Extra Action */}
             <button className="hidden sm:flex p-2.5 rounded-xl text-slate-400 hover:bg-slate-100 transition-all">
               <FiBell size={20} />
             </button>
 
             <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
 
-            <div className="flex items-center gap-3 pl-2">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-900 leading-none">
-                  Admin User
-                </p>
-                <p className="text-[11px] text-slate-500 mt-1 font-medium">
-                  Super Admin
-                </p>
+            {status === "loading" ? (
+              <div className="flex items-center gap-3 animate-pulse">
+                <div className="text-right hidden sm:block">
+                  <div className="h-4 w-24 bg-slate-200 rounded mb-1"></div>
+                  <div className="h-3 w-16 bg-slate-100 rounded ml-auto"></div>
+                </div>
+                <div className="h-11 w-11 rounded-2xl bg-slate-200"></div>
               </div>
-              <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px]">
-                <div className="h-full w-full bg-white rounded-[14px] flex items-center justify-center text-indigo-600 overflow-hidden">
-                  <FiUser size={22} />
+            ) : (
+              <div className="flex items-center gap-3 pl-2">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-bold text-slate-900 leading-none">
+                    {logInData?.fullName || "Guest User"}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1 font-medium uppercase tracking-wider">
+                    {logInData?.role || "Member"}
+                  </p>
+                </div>
+                <div className="h-11 w-11 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 p-[2px] shadow-md shadow-indigo-100">
+                  <div className="h-full w-full bg-white rounded-[14px] flex items-center justify-center overflow-hidden relative">
+                    <Image
+                      src={logInData?.photo || "/placeholder-user.png"}
+                      alt="User profile"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </header>
 
-        {/* Scrollable Main Content Area */}
         <main className="flex-1 overflow-y-auto bg-slate-50/50 p-4 lg:p-10 custom-scrollbar">
           <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
@@ -142,7 +155,6 @@ const DashboardLayout = ({ children }) => {
         </main>
       </div>
 
-      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"

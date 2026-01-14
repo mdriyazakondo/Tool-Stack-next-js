@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 import {
   FiMail,
   FiLock,
@@ -9,43 +11,54 @@ import {
   FiEyeOff,
   FiArrowRight,
   FiLoader,
-  FiCheckCircle,
 } from "react-icons/fi";
 import { RiLayoutGridFill } from "react-icons/ri";
 import Link from "next/link";
+import { createUser } from "@/services/user.service";
+import GoogleSignIn from "../_components/GoogleSignIn/GoogleSignIn";
 
 const RegisterPage = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    // Simulate Registration API Call
-    setTimeout(() => {
-      if (formData.email.includes("@")) {
-        // সফল রেজিস্ট্রেশন সিমুলেশন
-        router.push("/login");
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
+      const res = await createUser({ ...data, role: "user", date: new Date() });
+      console.log(res);
+      if (res?.user?.insertedId) {
+        Swal.fire({
+          icon: "success",
+          title: "Account Created!",
+          text: "Your account has been created successfully.",
+          showConfirmButton: true,
+        }).then(() => {
+          router.push("/login");
+        });
       } else {
-        setError("Something went wrong. Please check your details.");
-        setIsLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops!",
+          text: "Something went wrong. Please try again.",
+        });
       }
-    }, 1800);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: error.message || "Failed to create account",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center relative overflow-hidden font-sans">
       <div className="absolute top-[-10%] right-[-5%] w-72 h-72 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
@@ -69,95 +82,119 @@ const RegisterPage = () => {
 
         {/* Card */}
         <div className="bg-white/80 backdrop-blur-xl py-10 px-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] sm:rounded-[2.5rem] sm:px-12 border border-white">
-          <form className="space-y-5" onSubmit={handleRegister}>
-            {error && (
-              <div className="bg-rose-50 border border-rose-100 text-rose-600 text-sm p-4 rounded-2xl font-semibold flex items-center gap-3">
-                <span className="w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
-                {error}
-              </div>
-            )}
-
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             {/* Full Name */}
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                 Full Name
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within:text-indigo-600 text-slate-400 transition-colors">
-                  <FiUser className="text-xl" />
-                </div>
+                <FiUser className="absolute left-4 top-4 text-xl text-slate-400 group-focus-within:text-indigo-600" />
                 <input
+                  {...register("fullName", {
+                    required: "Full name is required",
+                  })}
                   type="text"
-                  name="fullName"
-                  required
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none placeholder:text-slate-400"
+                  className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
                   placeholder="John Doe"
                 />
               </div>
+              {errors.fullName && (
+                <p className="text-rose-600 text-sm font-medium mt-1 ml-1">
+                  {errors.fullName.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                Photo Url
+              </label>
+              <div className="relative group">
+                <FiUser className="absolute left-4 top-4 text-xl text-slate-400 group-focus-within:text-indigo-600" />
+                <input
+                  {...register("photo", {
+                    required: "Photo is required",
+                  })}
+                  type="text"
+                  className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
+                  placeholder="photo url"
+                />
+              </div>
+              {errors.photo && (
+                <p className="text-rose-600 text-sm font-medium mt-1 ml-1">
+                  {errors.photo.message}
+                </p>
+              )}
             </div>
 
-            {/* Email Field */}
+            {/* Email */}
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                 Work Email
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within:text-indigo-600 text-slate-400 transition-colors">
-                  <FiMail className="text-xl" />
-                </div>
+                <FiMail className="absolute left-4 top-4 text-xl text-slate-400 group-focus-within:text-indigo-600" />
                 <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: "Invalid email format",
+                    },
+                  })}
                   type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none placeholder:text-slate-400"
+                  className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
                   placeholder="john@company.com"
                 />
               </div>
+              {errors.email && (
+                <p className="text-rose-600 text-sm font-medium mt-1 ml-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
                 Password
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within:text-indigo-600 text-slate-400 transition-colors">
-                  <FiLock className="text-xl" />
-                </div>
+                <FiLock className="absolute left-4 top-4 text-xl text-slate-400 group-focus-within:text-indigo-600" />
                 <input
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
                   type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none placeholder:text-slate-400"
+                  className="block w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
                   placeholder="Create a strong password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-indigo-600"
+                  className="absolute right-4 top-4 text-xl text-slate-400 hover:text-indigo-600"
                 >
-                  {showPassword ? (
-                    <FiEyeOff className="text-xl" />
-                  ) : (
-                    <FiEye className="text-xl" />
-                  )}
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-rose-600 text-sm font-medium mt-1 ml-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center items-center gap-3 py-4.5 px-4 rounded-2xl shadow-xl shadow-indigo-100 text-base font-bold text-white transition-all duration-300 transform active:scale-[0.98] ${
+              className={`w-full flex justify-center items-center gap-3 py-4 rounded-2xl text-base font-bold text-white transition-all ${
                 isLoading
                   ? "bg-indigo-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-slate-900 hover:shadow-indigo-200"
+                  : "bg-indigo-600 hover:bg-slate-900"
               }`}
             >
               {isLoading ? (
@@ -173,8 +210,7 @@ const RegisterPage = () => {
             </button>
           </form>
 
-          {/* Footer Link */}
-          <div className="mt-8 text-center border-t border-slate-100 pt-8">
+          <div className="mt-8 text-center border-t border-slate-100 pt-8 mb-6">
             <p className="text-sm text-slate-500 font-medium">
               Already have an account?{" "}
               <Link
@@ -185,6 +221,7 @@ const RegisterPage = () => {
               </Link>
             </p>
           </div>
+          <GoogleSignIn />
         </div>
       </div>
     </div>
