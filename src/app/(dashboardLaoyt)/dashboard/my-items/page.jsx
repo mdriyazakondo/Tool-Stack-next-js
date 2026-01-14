@@ -1,7 +1,7 @@
 import { getAllItems } from "@/services/item.server";
 import React from "react";
 import Link from "next/link";
-import { FiEdit2, FiTrash2, FiExternalLink, FiEye } from "react-icons/fi";
+import { FiEdit2, FiExternalLink, FiEye } from "react-icons/fi";
 import Image from "next/image";
 import DeleteButton from "./_components/DeleteButton";
 
@@ -107,12 +107,13 @@ const MyItems = async () => {
                         >
                           <FiEye size={18} />
                         </Link>
-                        <button
+                        <Link
+                          href={`/dashboard/my-items/${item._id}`}
                           className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
                           title="Edit"
                         >
                           <FiEdit2 size={18} />
-                        </button>
+                        </Link>
                         <DeleteButton id={item._id} />
                       </div>
                     </td>

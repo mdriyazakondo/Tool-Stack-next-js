@@ -76,7 +76,7 @@ const SingleItems = async ({ params }) => {
                 height={500}
                 src={tool.image}
                 alt={tool.name}
-                className="w-full aspect-[16/10] object-cover shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                className="w-full aspect-16/10 object-cover shadow-2xl transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-[3rem]"></div>
             </div>
@@ -138,24 +138,24 @@ const SingleItems = async ({ params }) => {
                     {tool.name}
                   </h1>
 
-                  <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 mb-10">
+                  <div className="bg-slate-50 rounded-4xl p-6 border border-slate-100 mb-10">
                     <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-2">
                       One-time Investment
                     </p>
                     <div className="flex items-baseline gap-1">
                       <span className="text-4xl font-black text-slate-900">
-                        ${tool.price}
+                        {tool.price}
                       </span>
                       <span className="text-slate-400 font-bold">/USD</span>
                     </div>
                   </div>
 
                   {tool.isPremium ? (
-                    <button className="w-full bg-indigo-600 text-white py-6 rounded-[2rem] font-black text-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3">
+                    <button className="w-full bg-indigo-600 text-white py-6 rounded-4xl font-black text-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3">
                       Purchase Access <FiExternalLink />
                     </button>
                   ) : (
-                    <button className="w-full bg-indigo-600 text-white py-6 rounded-[2rem] font-black text-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3">
+                    <button className="w-full bg-indigo-600 text-white py-6 rounded-4xl font-black text-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3">
                       Free Access
                       <FiExternalLink />
                     </button>
@@ -179,7 +179,7 @@ const SingleItems = async ({ params }) => {
                   Managed By
                 </h4>
                 <div className="flex items-center gap-5">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-3xl shadow-lg border-2 border-slate-800">
+                  <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-3xl shadow-lg border-2 border-slate-800">
                     <FiUser />
                   </div>
                   <div>

@@ -162,7 +162,8 @@ const DashboardLayout = ({ children }) => {
                     <Image
                       src={logInData?.photo || "/placeholder-user.png"}
                       alt="User profile"
-                      fill
+                      width={40}
+                      height={40}
                       className="object-cover"
                     />
                   </div>

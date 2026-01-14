@@ -38,6 +38,31 @@ export const singleItem = async (id) => {
   return data;
 };
 
+export const updateItem = async ({ item, id }) => {
+  try {
+    const res = await fetch(
+      `${
+        process.env.NEXT_AUTH_URL || "http://localhost:3000"
+      }/api/add-item/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to create item");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("createItem Error:", error);
+    return { success: false, message: error.message };
+  }
+};
+
 export const deleteItem = async (id) => {
   try {
     const res = await fetch(

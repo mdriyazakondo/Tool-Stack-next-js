@@ -11,6 +11,7 @@ import {
   FiPlusCircle,
   FiTag,
   FiType,
+  FiStar, // Star icon add kora hoyeche
 } from "react-icons/fi";
 import { TbPremiumRights } from "react-icons/tb";
 import { createItem } from "@/services/item.server";
@@ -40,10 +41,12 @@ const AddItemPage = () => {
       isPremium: false,
       ownerName: "",
       ownerEmail: "",
+      rating: 5, // Default rating 5
     },
   });
 
   const isPremiumValue = watch("isPremium");
+  const currentRating = watch("rating"); // Watch rating for UI update
 
   useEffect(() => {
     if (logInData) {
@@ -54,8 +57,11 @@ const AddItemPage = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    // Rating string thakle setake number-e convert kora
+    const finalData = { ...data, rating: Number(data.rating) };
+
     try {
-      const result = await createItem(data);
+      const result = await createItem(finalData);
 
       if (result.acknowledged || result.insertedId) {
         setSuccess(true);
@@ -84,11 +90,13 @@ const AddItemPage = () => {
     }
   };
 
-  // Show loading if user data is not ready yet
-  if (userLoading) return <p>Loading user data...</p>;
+  if (userLoading)
+    return (
+      <p className="text-center py-20 font-medium">Loading user data...</p>
+    );
 
   return (
-    <div className="max-w-3xl mx-auto animate-in fade-in duration-500 pb-10">
+    <div className="max-w-3xl mx-auto animate-in fade-in duration-500 pb-10 px-4">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">
@@ -101,7 +109,6 @@ const AddItemPage = () => {
       </div>
 
       <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200/50 relative overflow-hidden">
-        {/* Success Overlay */}
         {success && (
           <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center animate-in zoom-in duration-300">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-lg shadow-emerald-100">
@@ -178,6 +185,33 @@ const AddItemPage = () => {
             </div>
           </div>
 
+          {/* Rating Section (New UI) */}
+          <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+            <label className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+              <FiStar className="text-amber-500 fill-amber-500" /> Tool Rating
+            </label>
+            <div className="flex items-center gap-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setValue("rating", star)}
+                  className={`text-3xl transition-all transform hover:scale-110 ${
+                    star <= currentRating ? "text-amber-400" : "text-slate-300"
+                  }`}
+                >
+                  <FiStar
+                    fill={star <= currentRating ? "currentColor" : "none"}
+                  />
+                </button>
+              ))}
+              <span className="ml-4 font-black text-slate-600 bg-white px-4 py-1 rounded-full border border-slate-200 shadow-sm">
+                {currentRating}.0
+              </span>
+            </div>
+            <input type="hidden" {...register("rating")} />
+          </div>
+
           {/* Price & Image */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -212,37 +246,28 @@ const AddItemPage = () => {
             </div>
           </div>
 
-          {/* Owner Name & Email */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Owner Info (ReadOnly) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-80">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1">
                 Owner Name
               </label>
               <input
                 type="text"
-                className={`w-full px-5 py-4 bg-slate-50 border ${
-                  errors.ownerName ? "border-red-400" : "border-slate-200"
-                } rounded-2xl focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 outline-none transition-all`}
-                {...register("ownerName", {
-                  required: "Owner Name is required",
-                })}
                 readOnly
+                className="w-full px-5 py-4 bg-slate-100 border border-slate-200 rounded-2xl outline-none cursor-not-allowed"
+                {...register("ownerName")}
               />
             </div>
-
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1">
                 Owner Email
               </label>
               <input
                 type="email"
-                className={`w-full px-5 py-4 bg-slate-50 border ${
-                  errors.ownerEmail ? "border-red-400" : "border-slate-200"
-                } rounded-2xl focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 outline-none transition-all`}
-                {...register("ownerEmail", {
-                  required: "Owner Email is required",
-                })}
                 readOnly
+                className="w-full px-5 py-4 bg-slate-100 border border-slate-200 rounded-2xl outline-none cursor-not-allowed"
+                {...register("ownerEmail")}
               />
             </div>
           </div>

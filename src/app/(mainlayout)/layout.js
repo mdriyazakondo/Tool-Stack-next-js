@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar/Navbar";
 
 const layout = ({ children }) => {
   return (
-    <div>
+    <div className="">
       <Navbar />
       <div className="min-h-[95vh]">{children}</div>
       <Footer />

@@ -10,10 +10,17 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const filter = { _id: new ObjectId(id) };
-  const result = await collection.updateOne(filter);
-  return Response.json(result);
+  const updateItem = await request.json();
+  const updateDoc = { $set: updateItem };
+  console.log(updateItem);
+  const result = await collection.updateOne(filter, updateDoc);
+  console.log(result);
+  return Response.json({
+    success: true,
+    insertedId: result.acknowledged,
+  });
 }
 
 export async function DELETE(request, { params }) {
