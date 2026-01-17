@@ -3,6 +3,7 @@
 export const createUser = async (userData) => {
   try {
     const res = await fetch("https://tools-stack.vercel.app/api/users", {
+      // const res = await fetch("http://localhost:3000/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

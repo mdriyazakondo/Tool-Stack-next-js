@@ -1,12 +1,15 @@
 "use client";
 import useUser from "@/hook/useUser";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 
 const MyProfile = () => {
   const { users: userData, status } = useUser();
   const logInData = userData?.user;
-  console.log(logInData);
+  const { data: session } = useSession();
+  const logInDataS = session?.user;
+
   const user = {
     fullName: "Amanda Brown",
     photo: "https://ik.imagekit.io/2o23yla4n/riyaz_akondo-modified.png",
@@ -26,7 +29,7 @@ const MyProfile = () => {
           <div className="relative text-center">
             <div className="p-1.5 bg-white/20 backdrop-blur-lg rounded-4xl inline-block shadow-2xl">
               <Image
-                src={logInData?.photo}
+                src={logInData?.photo || logInDataS?.image}
                 alt="profile"
                 width={240}
                 height={250}

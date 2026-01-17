@@ -14,10 +14,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
-
+  const logInData = session?.user;
   const { users: userData, status } = useUser();
-  const logInData = userData?.user;
-
+  const logInDataS = userData?.user;
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -32,7 +31,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/", icon: null },
-    { name: "Explore", href: "/items", icon: <FiCompass /> },
+    { name: "All Tools", href: "/items", icon: <FiCompass /> },
     {
       name: "My Profile",
       href: "/dashboard/my-profile",
@@ -86,11 +85,8 @@ const Navbar = () => {
 
             {status === "loading" ? (
               <div className="flex items-center gap-3">
-                {/* Add Tool Button Skeleton */}
                 <div className="h-9 w-24 bg-slate-200 animate-pulse rounded-xl"></div>
-                {/* User Profile Skeleton */}
                 <div className="h-10 w-10 bg-slate-200 animate-pulse rounded-full"></div>
-                {/* Logout Icon Skeleton */}
                 <div className="h-8 w-8 bg-slate-100 animate-pulse rounded-lg"></div>
               </div>
             ) : session ? (
@@ -104,7 +100,7 @@ const Navbar = () => {
 
                 <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-indigo-100 shadow-sm relative">
                   <Image
-                    src={logInData?.photo || "/placeholder-user.png"}
+                    src={logInData?.image || logInDataS?.photo}
                     alt="User profile"
                     fill
                     className="object-cover"

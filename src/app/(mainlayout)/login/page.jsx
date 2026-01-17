@@ -31,15 +31,16 @@ const LoginPage = () => {
         redirect: false,
         email: data.email,
         password: data.password,
+        callbackUrl:"/"
       });
-
-      if (res) {
+      console.log("SIGNIN RESPONSE =>", res);
+      if (res?.error) {
         Swal.fire({
           title: "Login Failed!",
-          text: res?.error || "Invalid email or password",
+          text: res.error,
           icon: "error",
         });
-        setError(res?.error || "Invalid email or password");
+        setError(res.error);
       } else {
         Swal.fire({
           title: "Success 🎉",

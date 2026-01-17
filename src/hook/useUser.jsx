@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import { useContext, useEffect } from "react";
 
 const useUser = () => {
-  const { data: session, status } = useSession();
-  const email = session?.user?.email;
+  const { data: sessions, status } = useSession();
+  const email = sessions?.user?.email;
   const { users, setUsers } = useContext(userContext);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const useUser = () => {
     fetchUser();
   }, [email, setUsers]);
 
-  return { users, status };
+  return { users, status, sessions };
 };
 
 export default useUser;

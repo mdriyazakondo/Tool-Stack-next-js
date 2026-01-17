@@ -14,19 +14,18 @@ import {
   FiBell,
 } from "react-icons/fi";
 import { RiLayoutGridFill, RiProfileLine } from "react-icons/ri";
-import useUser from "@/hook/useUser";
 import Image from "next/image";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { FaUser } from "react-icons/fa";
+import useUser from "@/hook/useUser";
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
-
   const { users: userData, status } = useUser();
-  const logInData = userData?.user;
-
-  // Menu items depend on logged-in user role
+  const logInDataS = userData?.user;
+  const { data: session } = useSession();
+  const logInData = session?.user;
   const menuItems = [
     { name: "Overview", icon: <FiPieChart />, path: "/dashboard" },
     { name: "My Tools", icon: <FiGrid />, path: "/dashboard/my-items" },
@@ -156,7 +155,7 @@ const DashboardLayout = ({ children }) => {
               <div className="flex items-center gap-3 pl-2">
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-bold text-slate-900 leading-none">
-                    {logInData?.fullName || "Guest User"}
+                    {logInData?.name || "Guest User"}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-1 font-medium uppercase tracking-wider">
                     {logInData?.role || "Member"}
@@ -165,7 +164,7 @@ const DashboardLayout = ({ children }) => {
                 <div className="h-11 w-11 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 p-[2px] shadow-md shadow-indigo-100">
                   <div className="h-full w-full bg-white rounded-[14px] flex items-center justify-center overflow-hidden relative">
                     <Image
-                      src={logInData?.photo || "/placeholder-user.png"}
+                      src={logInData?.image || logInDataS?.photo}
                       alt="User profile"
                       width={40}
                       height={40}

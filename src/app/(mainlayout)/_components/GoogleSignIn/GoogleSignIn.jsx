@@ -1,15 +1,26 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { FiLoader } from "react-icons/fi";
+import { createUser } from "@/services/user.service";
 
 export default function GoogleSignIn() {
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+  const logInData = session?.user;
 
+  const userData = {
+    email: logInData?.email,
+    photo: logInData?.image,
+    name: logInData?.name,
+    role: logInData?.role,
+  };
   const handleGoogleLogin = async () => {
     setLoading(true);
-    await signIn("google", { callbackUrl: "/items" });
+    const dataUser = await signIn("google", { callbackUrl: "/" });
+    const res = await createUser(userData);
+    console.log(dataUser, "data");
   };
 
   return (

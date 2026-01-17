@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import { dbConnect } from "@/lib/dbConnect";
+import { ObjectId } from "mongodb";
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -29,6 +30,15 @@ export const authOptions = {
             user.password,
           );
           if (!isMatch) throw new Error("Invalid password");
+          await users.updateOne(
+            { email: user.email },
+            {
+              $set: {
+                last_login: new Date(),
+                updatedAt: new Date(),
+              },
+            },
+          );
 
           return {
             id: user._id.toString(),
@@ -57,12 +67,23 @@ export const authOptions = {
           const existing = await users.findOne({ email: user.email });
           if (!existing) {
             await users.insertOne({
-              name: user.name,
+              fullName: user.name,
               email: user.email,
+              photo: user.image,
               role: "user",
               provider: "google",
-              createdAt: new Date(),
+              date: new Date(),
             });
+          } else {
+            await users.updateOne(
+              { email: user.email },
+              {
+                $set: {
+                  updatedAt: new Date(),
+                  last_login: new Date(),
+                },
+              },
+            );
           }
         }
         return true;
