@@ -2,7 +2,7 @@
 
 export const createUser = async (userData) => {
   try {
-    const res = await fetch("http://localhost:3000/api/users", {
+    const res = await fetch("https://tools-stack.vercel.app/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,9 @@ export const createUser = async (userData) => {
 
 export const getUser = async (email) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/users?email=${email}`);
+    const res = await fetch(
+      `https://tools-stack.vercel.app/api/users?email=${email}`,
+    );
     const data = await res.json();
     return data;
   } catch (error) {
@@ -30,7 +32,7 @@ export const getUser = async (email) => {
 export const getUserAll = async (email) => {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/all-user?email=${email}`
+      `https://tools-stack.vercel.app/api/all-user?email=${email}`,
     );
     const data = await res.json();
     return data;

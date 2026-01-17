@@ -2,14 +2,14 @@
 export const createItem = async (item) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_AUTH_URL || "http://localhost:3000"}/api/add-item`,
+      `${process.env.NEXT_AUTH_URL || "https://tools-stack.vercel.app"}/api/add-item`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(item),
-      }
+      },
     );
     if (!res.ok) {
       throw new Error("Failed to create item");
@@ -24,7 +24,7 @@ export const createItem = async (item) => {
 
 export const getAllItems = async () => {
   const res = await fetch(
-    `${process.env.NEXT_AUTH_URL || "http://localhost:3000"}/api/add-item`
+    `${process.env.NEXT_AUTH_URL || "https://tools-stack.vercel.app"}/api/add-item`,
   );
   const data = await res.json();
   return data;
@@ -32,7 +32,7 @@ export const getAllItems = async () => {
 
 export const singleItem = async (id) => {
   const res = await fetch(
-    `${process.env.NEXT_AUTH_URL || "http://localhost:3000"}/api/add-item/${id}`
+    `${process.env.NEXT_AUTH_URL || "https://tools-stack.vercel.app"}/api/add-item/${id}`,
   );
   const data = await res.json();
   return data;
@@ -42,7 +42,7 @@ export const updateItem = async ({ item, id }) => {
   try {
     const res = await fetch(
       `${
-        process.env.NEXT_AUTH_URL || "http://localhost:3000"
+        process.env.NEXT_AUTH_URL || "https://tools-stack.vercel.app"
       }/api/add-item/${id}`,
       {
         method: "PUT",
@@ -50,7 +50,7 @@ export const updateItem = async ({ item, id }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(item),
-      }
+      },
     );
     if (!res.ok) {
       throw new Error("Failed to create item");
@@ -67,14 +67,14 @@ export const deleteItem = async (id) => {
   try {
     const res = await fetch(
       `${
-        process.env.NEXT_AUTH_URL || "http://localhost:3000"
+        process.env.NEXT_AUTH_URL || "https://tools-stack.vercel.app"
       }/api/add-item/${id}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     if (!res.ok) {
       throw new Error("Failed to delete the item");

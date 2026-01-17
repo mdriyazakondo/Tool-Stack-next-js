@@ -10,6 +10,17 @@ export async function GET(request, { params }) {
   return Response.json(result);
 }
 
+export async function PATCH(request, { params }) {
+  const { id } = await params;
+  const updateBody = await request.json();
+  const filter = { _id: new ObjectId(id) };
+  const updateDoc = {
+    $set: updateBody,
+  };
+  const result = await collection.updateOne(filter, updateDoc);
+  return Response.json(result);
+}
+
 export async function DELETE(request, { params }) {
   const { id } = await params;
   const { searchParams } = new URL(request.url);

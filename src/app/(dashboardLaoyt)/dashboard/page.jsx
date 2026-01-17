@@ -11,7 +11,7 @@ import {
 } from "react-icons/fi";
 
 const OverviewPage = () => {
-  // Mock Stats Data
+
   const stats = [
     {
       label: "Total Tools",

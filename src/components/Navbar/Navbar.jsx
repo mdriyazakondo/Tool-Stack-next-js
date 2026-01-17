@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
-import { RiLayoutGridFill } from "react-icons/ri";
+import { RiLayoutGridFill, RiProfileFill } from "react-icons/ri";
 import { FiPlusCircle, FiLogOut, FiCompass } from "react-icons/fi";
 import { MdDashboardCustomize } from "react-icons/md";
 import { signOut, useSession } from "next-auth/react";
@@ -33,6 +33,11 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", href: "/", icon: null },
     { name: "Explore", href: "/items", icon: <FiCompass /> },
+    {
+      name: "My Profile",
+      href: "/dashboard/my-profile",
+      icon: <RiProfileFill />,
+    },
     ...(logInData
       ? [
           {

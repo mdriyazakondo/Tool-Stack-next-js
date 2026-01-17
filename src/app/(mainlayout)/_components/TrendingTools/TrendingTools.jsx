@@ -4,6 +4,7 @@ import { FiStar, FiArrowRight, FiExternalLink, FiTag } from "react-icons/fi";
 import { getLatest } from "@/services/latest.server";
 import Image from "next/image";
 import ItemCart from "../../items/_components/ItemCart";
+export const dynamic = "force-dynamic";
 
 const TrendingTools = async () => {
   const latests = await getLatest();

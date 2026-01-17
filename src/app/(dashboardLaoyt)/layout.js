@@ -13,7 +13,7 @@ import {
   FiX,
   FiBell,
 } from "react-icons/fi";
-import { RiLayoutGridFill } from "react-icons/ri";
+import { RiLayoutGridFill, RiProfileLine } from "react-icons/ri";
 import useUser from "@/hook/useUser";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
@@ -34,6 +34,11 @@ const DashboardLayout = ({ children }) => {
       name: "Add New Tool",
       icon: <FiPlusSquare />,
       path: "/dashboard/add-item",
+    },
+    {
+      name: "My Profile",
+      icon: <RiProfileLine />,
+      path: "/dashboard/my-profile",
     },
     ...(logInData?.role === "admin"
       ? [

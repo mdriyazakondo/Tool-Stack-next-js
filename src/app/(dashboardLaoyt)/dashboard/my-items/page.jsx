@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FiEdit2, FiExternalLink, FiEye } from "react-icons/fi";
 import Image from "next/image";
 import DeleteButton from "./_components/DeleteButton";
-
+export const dynamic = "force-dynamic";
 const MyItems = async () => {
   const myItems = await getAllItems();
 

@@ -1,21 +1,15 @@
 "use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import {
-  FiMail,
-  FiLock,
-  FiEye,
-  FiEyeOff,
-  FiArrowRight,
-  FiLoader,
-  FiShield,
-} from "react-icons/fi";
+import { FiMail, FiLock, FiEye, FiEyeOff, FiLoader } from "react-icons/fi";
 import { RiLayoutGridFill } from "react-icons/ri";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import GoogleSignIn from "../_components/GoogleSignIn/GoogleSignIn";
+
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,41 +20,47 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const onSubmit = async (data) => {
     setError("");
     setIsLoading(true);
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: data.email,
-      password: data.password,
-    });
-
-    if (res?.error) {
+      if (res) {
+        Swal.fire({
+          title: "Login Failed!",
+          text: res?.error || "Invalid email or password",
+          icon: "error",
+        });
+        setError(res?.error || "Invalid email or password");
+      } else {
+        Swal.fire({
+          title: "Success 🎉",
+          text: "Login Successful!",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        reset();
+        router.push("/");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
       Swal.fire({
-        title: "Login Failed!",
-        text: "Invalid email or password.",
+        title: "Error!",
+        text: "Something went wrong. Please try again.",
         icon: "error",
-        confirmButtonText: "Try Again",
       });
+      setError("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-    } else {
-      Swal.fire({
-        title: "Success 🎉",
-        text: "Login Successful!",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    }
-
-    if (res?.error) {
-      setError("Invalid email or password.");
-      setIsLoading(false);
-    } else {
-      router.push("/items");
     }
   };
 
@@ -121,10 +121,12 @@ const LoginPage = () => {
               <div className="relative">
                 <FiLock className="absolute left-4 top-4 text-xl text-slate-400 group-focus-within:text-indigo-600" />
                 <input
-                  {...register("password", { required: true })}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="block w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl"
+                  className="block w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
                 />
                 <button
                   type="button"
@@ -134,6 +136,11 @@ const LoginPage = () => {
                   {showPassword ? <FiEyeOff /> : <FiEye />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-rose-600 text-sm font-medium mt-1 ml-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
@@ -147,7 +154,7 @@ const LoginPage = () => {
 
           <div className="mt-10 text-center mb-6">
             <p className="text-sm text-slate-500 font-medium">
-              New account?
+              New account?{" "}
               <Link
                 href="/register"
                 className="text-indigo-600 font-extrabold ml-1"

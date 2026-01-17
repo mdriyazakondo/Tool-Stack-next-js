@@ -4,7 +4,7 @@ import Categories from "./_components/Categories/Categories";
 import TrendingTools from "./_components/TrendingTools/TrendingTools";
 import StatsAndSteps from "./_components/StatsAndSteps/StatsAndSteps";
 import FinalSections from "./_components/FinalSections/FinalSections";
-
+export const dynamic = "force-dynamic";
 const page = () => {
   return (
     <div>
