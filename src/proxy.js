@@ -9,13 +9,11 @@ export async function proxy(request) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-
   if (!token) {
     return NextResponse.redirect(
       new URL(`/login?callbackUrl=${pathname}`, request.url),
     );
   }
-
 
   if (pathname.startsWith("/dashboard") && token.role !== "user") {
     return NextResponse.redirect(

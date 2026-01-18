@@ -27,13 +27,12 @@ const LoginPage = () => {
     setError("");
     setIsLoading(true);
     try {
-      const res = await signIn("credentials", {
+      const res = await signIn("Credentials", {
         redirect: false,
         email: data.email,
         password: data.password,
-        callbackUrl:"/"
+        callbackUrl: "/",
       });
-      console.log("SIGNIN RESPONSE =>", res);
       if (res?.error) {
         Swal.fire({
           title: "Login Failed!",
@@ -50,7 +49,7 @@ const LoginPage = () => {
           showConfirmButton: false,
         });
         reset();
-        router.push("/");
+        router.push("/items");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -104,6 +103,7 @@ const LoginPage = () => {
                     },
                   })}
                   type="email"
+                  defaultValue={"mr.admin@gmail.com"}
                   className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"
                   placeholder="john@company.com"
                 />
@@ -125,6 +125,7 @@ const LoginPage = () => {
                   {...register("password", {
                     required: "Password is required",
                   })}
+                  defaultValue={"mr.admin@gmail.com"}
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="block w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none"

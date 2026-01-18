@@ -99,12 +99,15 @@ const Navbar = () => {
                 </Link>
 
                 <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-indigo-100 shadow-sm relative">
-                  <Image
-                    src={logInData?.image || logInDataS?.photo}
-                    alt="User profile"
-                    fill
-                    className="object-cover"
-                  />
+                  {logInData?.image ||
+                    (logInDataS?.photo && (
+                      <Image
+                        src={logInData?.image || logInDataS?.photo}
+                        alt="User profile"
+                        fill
+                        className="object-cover"
+                      />
+                    ))}
                 </div>
 
                 <button

@@ -13,8 +13,16 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: {
+          label: "Email",
+          type: "email",
+          value: "mr.admin@gmail.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          value: "mr.admin@gmail.com",
+        },
       },
       async authorize(credentials) {
         try {
@@ -115,7 +123,7 @@ export const authOptions = {
     },
 
     async redirect() {
-      return "/"; // default redirect
+      return "/items";
     },
   },
 };
